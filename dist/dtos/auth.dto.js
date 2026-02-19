@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminCreateUserDTO = exports.AuthResponseDTO = exports.VerifyEmailDTO = exports.ResetPasswordDTO = exports.ForgotPasswordDTO = exports.LoginDTO = exports.SignupDTO = void 0;
 // src/dtos/auth.dto.ts
 const class_validator_1 = require("class-validator");
-const user_model_1 = require("../models/user.model");
 class SignupDTO {
 }
 exports.SignupDTO = SignupDTO;
@@ -98,7 +97,6 @@ __decorate([
     __metadata("design:type", String)
 ], AdminCreateUserDTO.prototype, "password", void 0);
 __decorate([
-    (0, class_validator_1.IsEnum)(user_model_1.UserRole),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], AdminCreateUserDTO.prototype, "role", void 0);

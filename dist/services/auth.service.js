@@ -41,7 +41,7 @@ class AuthService {
             phoneNumber: input.phoneNumber,
             email: input.email,
             password: input.password,
-            role: user_model_1.UserRole.USER,
+            role: "user",
             emailVerificationToken,
         });
         const savedUser = await this.userRepo.save(user);

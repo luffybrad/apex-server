@@ -89,7 +89,6 @@ export class AdminCreateUserDTO {
   @MinLength(8, { message: "Password must be at least 8 characters" })
   password!: string;
 
-  @IsEnum(UserRole)
   @IsOptional()
   role?: UserRole;
 }

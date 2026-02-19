@@ -10,11 +10,7 @@ import {
 } from "typeorm";
 import bcrypt from "bcryptjs";
 
-export enum UserRole {
-  USER = "user",
-  ADMIN = "admin",
-  SUPER_ADMIN = "super_admin",
-}
+export type UserRole = "user" | "admin" | "super_admin";
 
 @Entity("users")
 export class User {
@@ -35,8 +31,8 @@ export class User {
 
   @Column({
     type: "enum",
-    enum: UserRole,
-    default: UserRole.USER,
+    enum: ["user", "admin", "super_admin"], // Use array of strings
+    default: "user",
   })
   role!: UserRole;
 

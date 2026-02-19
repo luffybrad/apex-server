@@ -53,7 +53,7 @@ export class AuthService {
       phoneNumber: input.phoneNumber,
       email: input.email,
       password: input.password,
-      role: UserRole.USER,
+      role: "user",
       emailVerificationToken,
     });
 

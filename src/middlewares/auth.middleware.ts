@@ -62,5 +62,6 @@ export const authorize = (...roles: UserRole[]) => {
 };
 
 // Specific role middlewares
-export const isAdmin = authorize(UserRole.ADMIN, UserRole.SUPER_ADMIN);
-export const isSuperAdmin = authorize(UserRole.SUPER_ADMIN);
+// Specific role middlewares - Use string literals directly
+export const isAdmin = authorize("admin", "super_admin");
+export const isSuperAdmin = authorize("super_admin");

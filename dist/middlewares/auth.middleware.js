@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.isSuperAdmin = exports.isAdmin = exports.authorize = exports.authenticateJWT = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const app_error_1 = require("../utils/app.error");
-const user_model_1 = require("../models/user.model");
 const authenticateJWT = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -39,6 +38,7 @@ const authorize = (...roles) => {
 };
 exports.authorize = authorize;
 // Specific role middlewares
-exports.isAdmin = (0, exports.authorize)(user_model_1.UserRole.ADMIN, user_model_1.UserRole.SUPER_ADMIN);
-exports.isSuperAdmin = (0, exports.authorize)(user_model_1.UserRole.SUPER_ADMIN);
+// Specific role middlewares - Use string literals directly
+exports.isAdmin = (0, exports.authorize)("admin", "super_admin");
+exports.isSuperAdmin = (0, exports.authorize)("super_admin");
 //# sourceMappingURL=auth.middleware.js.map

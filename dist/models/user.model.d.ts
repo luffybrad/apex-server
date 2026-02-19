@@ -1,8 +1,4 @@
-export declare enum UserRole {
-    USER = "user",
-    ADMIN = "admin",
-    SUPER_ADMIN = "super_admin"
-}
+export type UserRole = "user" | "admin" | "super_admin";
 export declare class User {
     id: string;
     phoneNumber: string;

@@ -12,16 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = exports.UserRole = void 0;
+exports.User = void 0;
 // src/models/user.model.ts
 const typeorm_1 = require("typeorm");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-var UserRole;
-(function (UserRole) {
-    UserRole["USER"] = "user";
-    UserRole["ADMIN"] = "admin";
-    UserRole["SUPER_ADMIN"] = "super_admin";
-})(UserRole || (exports.UserRole = UserRole = {}));
 let User = class User {
     async hashPassword() {
         if (this.password) {
@@ -53,8 +47,8 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({
         type: "enum",
-        enum: UserRole,
-        default: UserRole.USER,
+        enum: ["user", "admin", "super_admin"], // Use array of strings
+        default: "user",
     }),
     __metadata("design:type", String)
 ], User.prototype, "role", void 0);

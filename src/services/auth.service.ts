@@ -2,7 +2,8 @@
 import { Repository } from "typeorm";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
-import { User, UserRole } from "../models/user.model";
+import { User } from "../models/user.model";
+import { UserRole } from "../constants/roles"; // Import from constants, not model
 import { AppError } from "../utils/app.error";
 import {
   AuthResponseDTO,
@@ -17,6 +18,7 @@ import { plainToInstance } from "class-transformer";
 import { validateDTO } from "../utils/validation";
 import { generateToken } from "../utils/jwt";
 import { EmailService } from "../utils/email.service";
+import { ReferralService } from "./referral.service";
 
 export class AuthService {
   private userRepo: Repository<User>;
@@ -45,6 +47,17 @@ export class AuthService {
       }
     }
 
+    // Validate referral code if provided
+    if (input.referralCode) {
+      const referralService = new ReferralService();
+      const isValid = await referralService.getReferrerByCode(
+        input.referralCode,
+      );
+      if (!isValid) {
+        throw new AppError("Invalid referral code", 400);
+      }
+    }
+
     // Generate email verification token
     const emailVerificationToken = crypto.randomBytes(32).toString("hex");
 
@@ -59,11 +72,21 @@ export class AuthService {
 
     const savedUser = await this.userRepo.save(user);
 
-    // Send verification email
-    await this.emailService.sendEmailVerification(
-      savedUser.email,
-      emailVerificationToken,
-    );
+    // Process referral after user is saved
+    if (input.referralCode) {
+      const referralService = new ReferralService();
+      await referralService.registerReferredUser(
+        savedUser.id,
+        input.referralCode,
+      );
+    }
+
+    // Send verification email (don't await - let it run in background)
+    this.emailService
+      .sendEmailVerification(savedUser.email, emailVerificationToken)
+      .catch((error) => {
+        console.error("Failed to send verification email:", error);
+      });
 
     // Generate JWT
     const token = generateToken({
@@ -73,18 +96,19 @@ export class AuthService {
       role: savedUser.role,
     });
 
-    // Send welcome email
-    await this.emailService.sendWelcomeEmail(
-      savedUser.email,
-      savedUser.phoneNumber,
-    );
+    // Send welcome email (don't await - let it run in background)
+    this.emailService
+      .sendWelcomeEmail(savedUser.email, savedUser.phoneNumber)
+      .catch((error) => {
+        console.error("Failed to send welcome email:", error);
+      });
 
     return new AuthResponseDTO({
       id: savedUser.id,
       phoneNumber: savedUser.phoneNumber,
       email: savedUser.email,
       role: savedUser.role,
-      balance: savedUser.balance,
+      balance: Number(savedUser.balance),
       createdAt: savedUser.createdAt,
       updatedAt: savedUser.updatedAt,
       token,

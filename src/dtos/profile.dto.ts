@@ -7,7 +7,7 @@ import {
   IsEmail,
   IsEnum,
 } from "class-validator";
-import { UserRole } from "../models/user.model";
+import { UserRole } from "../constants/roles"; // Import from constants
 
 export class UpdateProfileDTO {
   @IsOptional()
@@ -33,7 +33,7 @@ export class ProfileResponseDTO {
   email!: string;
   role!: UserRole;
   isEmailVerified!: boolean;
-  balance!: number; // Add this field
+  balance!: number;
   createdAt!: Date;
   updatedAt!: Date;
 

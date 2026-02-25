@@ -11,6 +11,9 @@ import { errorHandler } from "./middlewares/error.handler";
 import { AppDataSource } from "./config/data-source";
 import { initializeCronJobs } from "./utils/cron.jobs";
 import { InvestmentService } from "./services/investment.service";
+import referralRoutes from "./routes/referral.routes";
+import { apiLimiter, authLimiter } from "./middlewares/rate-limit.middleware";
+import transactionRoutes from "./routes/transaction.routes";
 
 // Load environment variables
 dotenv.config();
@@ -26,11 +29,15 @@ app.use(
   }),
 );
 app.use(express.json());
+app.use("/api/auth", authLimiter);
+app.use("/api", apiLimiter);
 
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/investments", investmentRoutes);
+app.use("/api/referrals", referralRoutes);
+app.use("/api/transactions", transactionRoutes);
 
 // Health check
 app.get("/health", (req, res) => {

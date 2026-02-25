@@ -2,7 +2,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { AppError } from "../utils/app.error";
-import { UserRole } from "../models/user.model";
+import { UserRole } from "../constants/roles"; // Import from constants
 
 export interface AuthRequest extends Request {
   user?: {
@@ -61,7 +61,6 @@ export const authorize = (...roles: UserRole[]) => {
   };
 };
 
-// Specific role middlewares
 // Specific role middlewares - Use string literals directly
 export const isAdmin = authorize("admin", "super_admin");
 export const isSuperAdmin = authorize("super_admin");

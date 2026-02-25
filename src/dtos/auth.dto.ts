@@ -6,8 +6,9 @@ import {
   IsEmail,
   IsOptional,
   IsEnum,
+  IsString,
 } from "class-validator";
-import { UserRole } from "../models/user.model";
+import { UserRole, ROLE_VALUES } from "../constants/roles"; // Import both
 
 export class SignupDTO {
   @IsPhoneNumber("KE", { message: "Phone number must be in Kenyan format" })
@@ -22,6 +23,10 @@ export class SignupDTO {
       "Password must contain at least one uppercase letter, one lowercase letter, and one number",
   })
   password!: string;
+
+  @IsOptional()
+  @IsString()
+  referralCode?: string; // Add optional referral code
 }
 
 export class LoginDTO {
@@ -90,5 +95,6 @@ export class AdminCreateUserDTO {
   password!: string;
 
   @IsOptional()
+  @IsEnum(ROLE_VALUES, { message: "Role must be user, admin, or super_admin" })
   role?: UserRole;
 }

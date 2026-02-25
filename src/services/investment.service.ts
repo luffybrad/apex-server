@@ -18,7 +18,7 @@ import {
   InvestmentHistoryDTO,
   InvestmentTransactionDTO,
 } from "../dtos/investment.dto";
-import { MoreThan } from "typeorm";
+import { ReferralService } from "./referral.service";
 
 export class InvestmentService {
   private userRepo: Repository<User>;
@@ -105,7 +105,9 @@ export class InvestmentService {
     userId: string,
     input: CreateInvestmentDTO,
   ): Promise<UserInvestmentDTO> {
-    await validateDTO(input);
+    const dto = plainToInstance(CreateInvestmentDTO, input);
+
+    await validateDTO(dto);
 
     // Get user with balance
     const user = await this.userRepo.findOne({
@@ -178,6 +180,15 @@ export class InvestmentService {
       await queryRunner.manager.save(transaction);
 
       await queryRunner.commitTransaction();
+
+      // Process referral award after transaction is committed
+      // Don't await this - let it run in background
+      const referralService = new ReferralService();
+      referralService
+        .processReferralAward(userId, investment.id)
+        .catch((error) => {
+          console.error("Error processing referral award:", error);
+        });
 
       return plainToInstance(UserInvestmentDTO, {
         ...investment,
